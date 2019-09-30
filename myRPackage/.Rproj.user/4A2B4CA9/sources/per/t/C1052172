@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1569853154107.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2947254016",
+    "id" : "C1052172",
+    "lastKnownWriteTime" : 1569853178,
+    "last_content_update" : 1569853178636,
+    "path" : "~/myRPackage/man/lyapMia.Rd",
+    "project_path" : "man/lyapMia.Rd",
+    "properties" : {
+        "cursorPosition" : "5,32",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_doc"
+}
