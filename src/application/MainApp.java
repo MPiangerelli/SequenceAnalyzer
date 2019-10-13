@@ -21,6 +21,7 @@ import model.FileType;
 import util.TextConsole;
 import view.MenuController;
 import view.PlotResController;
+import view.PlotWindowResController;
 import view.RootLayoutController;
 
 public class MainApp extends Application {
@@ -32,6 +33,7 @@ public class MainApp extends Application {
      */
     private ObservableList<FileType> fileData = FXCollections.observableArrayList();
     private Rengine re = new Rengine(new String[0], false, new TextConsole());
+
 	/**
      * Constructor
      */
@@ -154,6 +156,60 @@ public class MainApp extends Application {
             alert.showAndWait();
         }    	
 
+    }
+    
+    
+    public void showWindowStatistics(FileType file) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/view/PlotResWindow.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Window Statistics");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            // Set the file into the controller.
+            PlotWindowResController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setValue(file);
+            controller.setPlots();
+            dialogStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not load data! 2");
+            alert.showAndWait();
+        }    	
+    }
+    
+    public void showLoadedStatistics(String path) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/view/PlotResWindow.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Loaded Statistics");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            // Set the file into the controller.
+            PlotWindowResController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setPlots();
+            controller.setFileExamined(path);
+            controller.setNaValues("Not present");
+            dialogStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not load data! 2");
+            alert.showAndWait();
+        }    	
     }
     
     public Rengine getRe() {

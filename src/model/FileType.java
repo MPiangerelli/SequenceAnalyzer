@@ -25,9 +25,9 @@ public class FileType {
 	private String numNeighbourSelected = "Number of neighbours used = 15";
 	private String nLagsSelected = "Number of lags used = 20";
 	private int maxElements;
-	private int partitionFrom;
-	private int partitionTo;
 	private String nicePlot;
+	private String windowDim;
+	private String overlapping;
 	
 	
 	public FileType(String name, FileExt extPref, String[] ext) {
@@ -148,8 +148,8 @@ public class FileType {
 
 	public void setEntropyMethodSelected(String entropyMethodSelected) {
 		if (!entropyMethodSelected.isEmpty()) {
-		this.entropyMethodSelected = "Entropy method = " + entropyMethodSelected;
-		}else this.entropyMethodSelected = "Entropy method = ML";
+		this.entropyMethodSelected = entropyMethodSelected;
+		}else this.entropyMethodSelected = "ML";
 	}
 
 	public String getBoxSizeSelected() {
@@ -158,8 +158,8 @@ public class FileType {
 
 	public void setBoxSizeSelected(String boxSizeSelected) {
 		if (!boxSizeSelected.isEmpty()) {
-		this.boxSizeSelected = "Box size used = " + boxSizeSelected;
-		} else this.boxSizeSelected = "Box size used = 50";
+		this.boxSizeSelected = boxSizeSelected;
+		} else this.boxSizeSelected = "50";
 	}
 
 	public String getNumNeighbourSelected() {
@@ -168,8 +168,8 @@ public class FileType {
 
 	public void setNumNeighbourSelected(String numNeighbourSelected) {
 		if (!numNeighbourSelected.isEmpty()) {
-		this.numNeighbourSelected = "Number of neighbours used = " + numNeighbourSelected;
-		} else this.numNeighbourSelected = "Number of neighbours used = 15";
+		this.numNeighbourSelected = numNeighbourSelected;
+		} else this.numNeighbourSelected = "15";
 	}
 
 	public String getnLagsSelected() {
@@ -178,8 +178,8 @@ public class FileType {
 
 	public void setnLagsSelected(String nLagsSelected) {
 		if (!nLagsSelected.isEmpty()) {
-		this.nLagsSelected = "Number of lags used = " + nLagsSelected;
-		} else this.nLagsSelected = "Number of lags used = 20";
+		this.nLagsSelected = nLagsSelected;
+		} else this.nLagsSelected = "20";
 	}
 	
 	//nlags-entropy-box-neigh
@@ -188,13 +188,6 @@ public class FileType {
 		setEntropyMethodSelected(par[1]);
 		setBoxSizeSelected(par[2]);
 		setNumNeighbourSelected(par[3]);
-		if ((!par[4].isEmpty() && !par[5].isEmpty()) && (Integer.parseInt(par[4]) < Integer.parseInt(par[5]))) {
-		setPartitionFrom(par[4]);
-		setPartitionTo(par[5]);
-		} else {
-			setPartitionFrom("");
-			setPartitionTo("");
-		}
 	}
 
 	public double getApproximateEntropy() {
@@ -221,33 +214,32 @@ public class FileType {
 		this.maxElements = maxElements;
 	}
 
-	public int getPartitionFrom() {
-		return partitionFrom;
-	}
-
-	public void setPartitionFrom(String partitionFrom) {
-		if (!partitionFrom.isEmpty()) {
-		this.partitionFrom = Integer.parseInt(partitionFrom);
-		} else this.partitionFrom = 0;
-	}
-		
-
-	public int getPartitionTo() {
-		return partitionTo;
-	}
-
-	public void setPartitionTo(String partitionTo) {
-		if (!partitionTo.isEmpty()) {
-		this.partitionTo = Integer.parseInt(partitionTo);
-		} else this.partitionTo = 0;
-	}
-
 	public String getNicePlot() {
 		return nicePlot;
 	}
 
 	public void setNicePlot(String nicePlot) {
 		this.nicePlot = nicePlot;
+	}
+
+	public String getWindowDim() {
+		return windowDim;
+	}
+
+	public void setWindowDim(String windowDim) {
+		if(windowDim.isEmpty()) {
+			this.windowDim = "0";
+		} else this.windowDim = windowDim;
+	}
+
+	public String getOverlapping() {
+		return overlapping;
+	}
+
+	public void setOverlapping(String overlapping) {
+		if(overlapping.isEmpty()) {
+			this.overlapping = "0";
+		} else this.overlapping = overlapping;
 	}
 	
 	

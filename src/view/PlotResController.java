@@ -44,10 +44,6 @@ public class PlotResController {
 	    @FXML
 	    private Label entropyMethodSelected;
 	    @FXML
-	    private Label partitionFromSelected;
-	    @FXML
-	    private Label partitionToSelected;
-	    @FXML
 	    private WebView nicePlot;
 	    
 	    private MainApp mainApp;
@@ -74,13 +70,11 @@ public class PlotResController {
 	    	this.numNeighbourSelected.setText(file.getNumNeighbourSelected());
 	    	this.approximateEntropy.setText(Double.toString(file.getApproximateEntropy()));
 	    	this.sampleEntropy.setText(Double.toString(file.getSampleEntropy()));
-	    	this.partitionFromSelected.setText(Integer.toString(file.getPartitionFrom()));
-	    	this.partitionToSelected.setText(Integer.toString(file.getPartitionTo()));
 	    	//getResources parte da dentro src/
 	    	try {
 				TimeUnit.SECONDS.sleep(3);
 				//this.nicePlot.getEngine().load(getClass().getResource("/interPlot.html").toExternalForm());
-				File prova = new File(AlgorithmR.ReplaceSlash(System.getProperty("user.dir")) + "/src/interPlot.html");
+				File prova = new File(AlgorithmR.ReplaceSlash(System.getProperty("user.dir")) + "/src/interPlot/interPlot.html");
 				this.nicePlot.getEngine().load(prova.toURL().toExternalForm());
 			} catch (InterruptedException | MalformedURLException e) {
 				e.printStackTrace();

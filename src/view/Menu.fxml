@@ -99,20 +99,19 @@
                            <GridPane.margin>
                               <Insets left="5.0" />
                            </GridPane.margin></Label>
-                        <Label text="Partition:" GridPane.rowIndex="11">
+                        <Label text="Window dimension:" GridPane.rowIndex="11">
                            <tooltip>
                               <Tooltip text="Take a portion of the file data instead of the entire data." />
                            </tooltip></Label>
-                        <TextField fx:id="partitionFrom" maxWidth="-Infinity" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                        <TextField fx:id="windowDim" maxWidth="-Infinity" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
                            <GridPane.margin>
-                              <Insets left="45.0" />
+                              <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="partitionTo" maxWidth="-Infinity" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
-                        <Label text="from:" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <Label text="to:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11">
+                        <TextField fx:id="overlapping" maxWidth="-Infinity" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
+                        <Label text="overlapping:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11">
                            <GridPane.margin>
-                              <Insets left="45.0" />
+                              <Insets />
                            </GridPane.margin>
                         </Label>
                         <CheckBox fx:id="approxEntropy" mnemonicParsing="false" text="Tick to add it" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9" />
@@ -141,8 +140,9 @@
                               <Insets right="5.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <Label text="Select the column to analyze:" GridPane.rowIndex="14" />
-                        <TextField maxWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <Label fx:id="csvInformation" text="Csv column index to analyze:" visible="false" GridPane.rowIndex="14" />
+                        <TextField fx:id="csvColumn" maxWidth="100.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <CheckBox fx:id="analyzeRow" mnemonicParsing="false" text="Analyze row (default is column)" textFill="WHITE" visible="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="14" />
                      </children>
                   </GridPane>
                   <ButtonBar layoutX="209.0" layoutY="244.0" prefHeight="40.0" prefWidth="313.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="10.0">

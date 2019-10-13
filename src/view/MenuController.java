@@ -40,6 +40,8 @@ public class MenuController {
 	private Label selectedFileLabel;
 	@FXML
 	private Label maxNotesLabel;
+	@FXML
+	private Label csvInformation;
 	@FXML 
 	private ComboBox<String> analysisCombo;
 	@FXML
@@ -49,11 +51,13 @@ public class MenuController {
 	@FXML
 	private TextField numNeighbour;
 	@FXML
-	private TextField partitionFrom;
+	private TextField windowDim;
 	@FXML
-	private TextField partitionTo;
+	private TextField overlapping;
 	@FXML
 	private TextField numOfNodes;
+	@FXML
+	private TextField csvColumn;
 	@FXML
 	private CheckBox approxEntropy;
 	@FXML
@@ -64,6 +68,8 @@ public class MenuController {
 	private CheckBox directedGraph;
 	@FXML
 	private CheckBox showIsolatedNodes;
+	@FXML
+	private CheckBox analyzeRow;
 	@FXML
 	private TextField fileName;
 
@@ -93,12 +99,14 @@ public class MenuController {
 		setIntFormatter(nLags,getNumberFilter());
 		setIntFormatter(boxSize,getNumberFilter());
 		setIntFormatter(numNeighbour,getNumberFilter());
-		partitionFrom.setVisible(false);
-		partitionTo.setVisible(false);
+		setIntFormatter(csvColumn,getNumberFilter());
+		windowDim.setVisible(false);
+		overlapping.setVisible(false);
 		numOfNodes.setVisible(false);
 		nLags.clear();
 		boxSize.clear();
 		numNeighbour.clear();
+		csvColumn.clear();
 	}
 
 	/**
@@ -126,6 +134,15 @@ public class MenuController {
 			ExtSupportedLabel.setText(fileType.getExtSupported());
 			selectedFileLabel.setText(fileType.getPath());
 			maxNotesLabel.setText(String.valueOf(fileType.getMaxElements()));
+			if(fileType.getExtPref()=="Csv") {
+				csvInformation.setVisible(true);
+				analyzeRow.setVisible(true);
+				csvColumn.setVisible(true);
+			} else {
+				csvInformation.setVisible(false);
+				analyzeRow.setVisible(false);
+				csvColumn.setVisible(false);
+			}
 		} else {
 			// File is null, remove all the text.
 			NameLabel.setText("");
@@ -140,6 +157,17 @@ public class MenuController {
 		UnaryOperator<Change> integerFilter = change -> {
 			String newText = change.getControlNewText();
 			if (newText.matches("([1-9][0-9]*)?")) {  //old: "-?([1-9][0-9]*)?"
+				return change;
+			}
+			return null;
+		};
+		return integerFilter;
+	}
+	
+	private UnaryOperator<Change> getNumberFilterWith0(){
+		UnaryOperator<Change> integerFilter = change -> {
+			String newText = change.getControlNewText();
+			if (newText.matches("([0-9][0-9]*)?")) {  //old: "-?([1-9][0-9]*)?"
 				return change;
 			}
 			return null;
@@ -183,20 +211,39 @@ public class MenuController {
 		if (selectedFilePath != null ) {
 			try {
 				mainApp.getPrimaryStage().getScene().setCursor(Cursor.WAIT);
-				String[] params =  { nLags.getText(),analysisCombo.getSelectionModel().getSelectedItem().toString(), boxSize.getText(), numNeighbour.getText(), partitionFrom.getText(),partitionTo.getText(),fileName.getText(),numOfNodes.getText()};
-				boolean[] opt = {approxEntropy.isSelected(),sampleEntropy.isSelected(),saveAsCsv.isSelected(),directedGraph.isSelected(),showIsolatedNodes.isSelected()};
+				if (overlapping.getText().isEmpty()) {overlapping.setText("0");};
+				String[] params =  { nLags.getText(),analysisCombo.getSelectionModel().getSelectedItem().toString(), boxSize.getText(), numNeighbour.getText(), windowDim.getText(),overlapping.getText(),fileName.getText(),numOfNodes.getText(),csvColumn.getText()};
+				boolean[] opt = {approxEntropy.isSelected(),sampleEntropy.isSelected(),saveAsCsv.isSelected(),directedGraph.isSelected(),showIsolatedNodes.isSelected(),analyzeRow.isSelected()};
+				clearWindowPlot("windowGraph1.jpg");
+				clearWindowPlot("windowGraph2.jpg");
+				clearWindowPlot("windowGraph3.jpg");
+				clearWindowPlot("windowGraph4.jpg");
+				clearWindowPlot("windowGraph5.jpg");
+//				if(AlgorithmR.ReplaceSlash(selectedFileLabel.getText()) == "Csv" && csvColumn.getText().isEmpty()) {
+//					Alert alert = new Alert(AlertType.WARNING);
+//					alert.initOwner(mainApp.getPrimaryStage());
+//					alert.setTitle("No Selection");
+//					alert.setHeaderText("No Column Selected");
+//					alert.setContentText("Please select a column to read!");
+//					alert.showAndWait();
+//				}
 				double[] tmp = AlgorithmR.doAlgorithm(mainApp.getRe(), AlgorithmR.ReplaceSlash(selectedFileLabel.getText()), params,fileTable.getSelectionModel().getSelectedItem().getExtPref(),opt);
 				fileTable.getSelectionModel().getSelectedItem().setFractaldim(tmp[0]);
 				fileTable.getSelectionModel().getSelectedItem().setEntropy(tmp[1]);
 				fileTable.getSelectionModel().getSelectedItem().setHurst(tmp[2]);
 				fileTable.getSelectionModel().getSelectedItem().setApproximateEntropy(tmp[3]);
 				fileTable.getSelectionModel().getSelectedItem().setSampleEntropy(tmp[4]);
-				File file = new File("rimage.jpg");
+				fileTable.getSelectionModel().getSelectedItem().setWindowDim(windowDim.getText());
+				fileTable.getSelectionModel().getSelectedItem().setOverlapping(overlapping.getText());
+				File file = new File("resources/plots/rimage.jpg");
 				Image image = new Image(file.toURI().toString());
 				fileTable.getSelectionModel().getSelectedItem().setImage(image);
-				fileTable.getSelectionModel().getSelectedItem().setNicePlot("/interPlot.html");
+				fileTable.getSelectionModel().getSelectedItem().setNicePlot("/interPlot/interPlot.html");
 				fileTable.getSelectionModel().getSelectedItem().setSelections(params);
-				mainApp.showStatistics(fileTable.getSelectionModel().getSelectedItem());
+				
+				if(!windowDim.getText().isEmpty() && (Integer.parseInt(windowDim.getText()) > Integer.parseInt(overlapping.getText()))) {
+					mainApp.showWindowStatistics(fileTable.getSelectionModel().getSelectedItem());
+				} else mainApp.showStatistics(fileTable.getSelectionModel().getSelectedItem());
 				mainApp.getRe().end();
 				fileTable.getSelectionModel().getSelectedItem().clear();
 				mainApp.getPrimaryStage().getScene().setCursor(Cursor.DEFAULT);
@@ -227,30 +274,54 @@ public class MenuController {
 		if (file != null) {
 			mainApp.getFileData().get(fileTable.getSelectionModel().getSelectedIndex()).setPath(file.getAbsolutePath());
 			mainApp.getPrimaryStage().getScene().setCursor(Cursor.WAIT);
+			mainApp.getRe().eval("libpath <- paste(getwd(),\"/R/win-library/3.6\",sep=\"\")");
+			mainApp.getRe().eval(".libPaths(libpath)");
 			int elements = 0;
 			switch (mainApp.getFileData().get(fileTable.getSelectionModel().getSelectedIndex()).getExtPref()) {
 			case("Midi"):
 				elements = AlgorithmR.HowManyNotes(mainApp.getRe(),file.getAbsolutePath());
-			break;
+				break;
 			case("Fasta"):
 				elements = AlgorithmR.HowManyFasta(mainApp.getRe(),file.getAbsolutePath());
-			break;
+				break;
 			case("Csv"):
-				elements = AlgorithmR.HowManyCsv(mainApp.getRe(),file.getAbsolutePath(),7);
-			break;
-			}
+				if(csvColumn.getText().isEmpty()) {
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.initOwner(mainApp.getPrimaryStage());
+					alert.setHeight(400);
+					alert.setTitle("No Selection");
+					alert.setHeaderText("No Column Selected");
+					alert.setContentText("Please select the index of the column to analyze before choosing a file!");
+					alert.showAndWait();
+					mainApp.getFileData().get(fileTable.getSelectionModel().getSelectedIndex()).setPath(null);
+				} else {
+					elements = AlgorithmR.HowManyCsv(mainApp.getRe(),file.getAbsolutePath(),csvColumn.getText(),analyzeRow.isSelected());
+					break;
+				}
+			 }
+			if (elements>1) {
 			mainApp.getFileData().get(fileTable.getSelectionModel().getSelectedIndex()).setMaxElements(elements);
 			showPersonDetails(mainApp.getFileData().get(fileTable.getSelectionModel().getSelectedIndex()));
-			partitionFrom.setVisible(true);
-			partitionTo.setVisible(true);
+			windowDim.setVisible(true);
+			overlapping.setVisible(true);
 			numOfNodes.setVisible(true);
-			setIntFormatter(partitionFrom,getFromToFilter(Integer.parseInt(maxNotesLabel.getText())));
-			setIntFormatter(partitionTo,getFromToFilter(Integer.parseInt(maxNotesLabel.getText())));
+			setIntFormatter(windowDim,getFromToFilter(Integer.parseInt(maxNotesLabel.getText())));
+			setIntFormatter(overlapping,getNumberFilterWith0());
 			setIntFormatter(numOfNodes,getFromToFilter(Integer.parseInt(maxNotesLabel.getText())));
-			partitionFrom.clear();
-			partitionTo.clear();
+			windowDim.clear();
+			overlapping.clear();
 			numOfNodes.clear();
+			} else if (!csvColumn.getText().isEmpty()){
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.initOwner(mainApp.getPrimaryStage());
+				alert.setHeight(400);
+				alert.setTitle("Bad Selection");
+				alert.setHeaderText("Wrong Column/Row Selected");
+				alert.setContentText("The index you chose was wrong! Please select another index!");
+				alert.showAndWait();
+			}
 			mainApp.getPrimaryStage().getScene().setCursor(Cursor.DEFAULT);
+			
 		}
 	}
 
@@ -263,5 +334,12 @@ public class MenuController {
 
 	public String getSelectedFileLabel() {
 		return AlgorithmR.ReplaceSlash(selectedFileLabel.getText());
+	}
+	
+	public static void clearWindowPlot(String name) {
+		File file = new File("resources/plots/" + name);
+		if (file.exists()) {
+			file.delete();
+		}
 	}
 }
